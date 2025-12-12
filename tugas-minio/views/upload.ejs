@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <title>Picture Upload</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 bg-dottore">
+    <div class="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8 m-4">
+        <h1 class="text-2xl font-bold mb-4 text-rose-950">Upload ur picture here</h1>
+
+        <% const successMsg = typeof success !== "undefined" ? success : ""; %>
+        <% const errorMsg = typeof error !== "undefined" ? error : ""; %>
+
+        <% if (successMsg) { %>
+            <div id="alert-success" class="mb-4 rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800 transition-opacity duration-500">
+                <%= successMsg %>
+            </div>
+            <% } %>
+
+            <% if (errorMsg) { %>
+            <div id="alert-error" class="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-red-800 transition-opacity duration-500">
+                <%= errorMsg %>
+            </div>
+        <% } %>
+
+
+
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <!-- DRAG & DROP -->
+        <div>
+            <label class="block text-sm font-semibold mb-2">File</label>
+
+            <div
+            id="dropzone"
+            class="border-2 border-dashed border-gray-400 rounded p-16 text-center text-gray-600 cursor-pointer hover:bg-gray-50"
+            >
+            <p id="dropzone-text">Drag & Drop <br>or <br>Click to Select</p>
+            </div>
+
+            <!-- INPUT -->
+            <input
+            id="hiddenFile"
+            type="file"
+            name="file"
+            class="hidden"
+            accept="image/*"
+            required
+            >
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2">Title</label>
+            <input
+            type="text"
+            name="title"
+            required
+            class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-rose-300"
+            >
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2">Desc / Tags</label>
+            <textarea
+            name="description"
+            rows="3"
+            class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-rose-300"
+            ></textarea>
+        </div>
+
+        <button class="w-full bg-rose-700 text-white font-semibold py-2 rounded hover:bg-rose-800 transition">
+            Upload
+        </button>
+        </form>
+
+        <a href="/photos" class="block text-center mt-4 text-rose-700 hover:underline">
+        Looking for the pictures? Click here!
+        </a>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById("dropzone");
+        const hiddenFile = document.getElementById("hiddenFile");
+        const dropzoneText = document.getElementById("dropzone-text");
+
+        dropzone.addEventListener("click", () => hiddenFile.click());
+
+        dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("bg-gray-100");
+        });
+
+        dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("bg-gray-100");
+        });
+
+        dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("bg-gray-100");
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            hiddenFile.files = dataTransfer.files;
+
+            dropzoneText.innerHTML = `<span class="font-light text-gray-500 text-sm">${file.name}</span>`;
+        }
+        });
+
+        hiddenFile.addEventListener("change", () => {
+        const file = hiddenFile.files[0];
+        if (file) {
+            dropzoneText.innerHTML = `
+            <div class="whitespace-normal break-words text-center">
+                <span class="font-light text-gray-500 text-sm">${file.name}</span>
+            </div>`;
+        }
+        });
+
+        setTimeout(() => {
+            const success = document.getElementById("alert-success");
+            const error = document.getElementById("alert-error");
+
+            if (success) {
+            success.style.opacity = "0";
+            setTimeout(() => success.remove(), 500);
+            }
+
+            if (error) {
+            error.style.opacity = "0";
+            setTimeout(() => error.remove(), 500);
+            }
+
+            if (window.location.search) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

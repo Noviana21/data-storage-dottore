@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .bg-dottore {
+        background-image: url("/images/dottore.png");
+        background-size: 1920px 1080px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+}
